@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Link2 } from "lucide-react";
 
 interface StatCardProps {
   title: string;
@@ -12,24 +12,32 @@ interface StatCardProps {
   };
   variant?: "default" | "primary" | "success" | "warning";
   className?: string;
+  /** On-chain source label to display */
+  onChainLabel?: string;
+  /** Optional object ID for on-chain reference */
+  objectId?: string;
 }
 
 const variantStyles = {
   default: {
     icon: "bg-background-hover text-foreground-muted",
     border: "border-border",
+    chainBg: "bg-background-hover",
   },
   primary: {
     icon: "bg-primary/10 text-primary",
     border: "border-primary/20",
+    chainBg: "bg-primary/5",
   },
   success: {
     icon: "bg-success/10 text-success",
     border: "border-success/20",
+    chainBg: "bg-success/5",
   },
   warning: {
     icon: "bg-warning/10 text-warning",
     border: "border-warning/20",
+    chainBg: "bg-warning/5",
   },
 };
 
@@ -40,7 +48,9 @@ export function StatCard({
   icon: Icon, 
   trend, 
   variant = "default",
-  className 
+  className,
+  onChainLabel,
+  objectId
 }: StatCardProps) {
   const styles = variantStyles[variant];
 
@@ -53,6 +63,15 @@ export function StatCard({
         className
       )}
     >
+      {/* On-chain indicator pulse */}
+      <div className="absolute top-3 right-3 flex items-center gap-1.5">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+        </span>
+        <span className="text-[10px] font-medium text-success uppercase tracking-wider">Live</span>
+      </div>
+
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-foreground-muted">{title}</p>
@@ -76,10 +95,30 @@ export function StatCard({
             </div>
           )}
         </div>
-        <div className={cn("p-3 rounded-xl", styles.icon)}>
+        <div className={cn("p-3 rounded-xl mt-4", styles.icon)}>
           <Icon className="h-5 w-5" />
         </div>
       </div>
+
+      {/* On-chain source label */}
+      {onChainLabel && (
+        <div className={cn(
+          "mt-4 pt-3 border-t border-border/50"
+        )}>
+          <div className="flex items-center gap-1.5">
+            <Link2 className="h-3 w-3 text-primary" />
+            <span className="text-[10px] font-medium text-foreground-subtle uppercase tracking-wide">
+              {onChainLabel}
+            </span>
+          </div>
+          {objectId && (
+            <div className="mt-1.5 font-mono text-[10px] text-foreground-subtle/70 flex items-center gap-1">
+              <span className="text-primary/60">Object:</span>
+              <span className="hover:text-primary cursor-pointer transition-colors">{objectId}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
